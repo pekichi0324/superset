@@ -1,4 +1,4 @@
-import { InsightsRequestData, DataType } from 'src/types/ChartData';
+import { InsightsRequestData, InsightsRequestDataType } from 'src/types/ChartData';
 
 /*
  * Helper to process graph data to retrieve its insights.
@@ -15,11 +15,11 @@ export function formatData(
       case 'world_map': {
         result.columns = [
           {
-            dataType: DataType.Number,
+            dataType: InsightsRequestDataType.Number,
             name: processingData['form_data']['metric'],
           },
           {
-            dataType: DataType.String,
+            dataType: InsightsRequestDataType.String,
             name: processingData['form_data']['entity'],
           },
         ];
@@ -27,7 +27,7 @@ export function formatData(
           let row = {} as Record<string, object>;
           for (let column of result.columns) {
             // Count value is labeled as "m1"
-            if (column.dataType == DataType.Number) {
+            if (column.dataType == InsightsRequestDataType.Number) {
               row[column.name] = entry['m1'];
             } else {
               // country name is labeled as "name"
@@ -43,7 +43,7 @@ export function formatData(
         (processingData.colnames as string[]).forEach((value, index) => {
           result.columns.push({
             name: value,
-            dataType: processingData.coltypes[index] as DataType,
+            dataType: processingData.coltypes[index] as InsightsRequestDataType,
           });
         });
         result.rows = processingData.data;

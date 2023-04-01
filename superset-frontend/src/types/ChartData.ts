@@ -1,14 +1,14 @@
 export interface InsightsRequestData {
   rows: Record<string, object>[];
-  columns: ColumnInfo[];
+  columns: InsightsRequestColumnInfo[];
 }
 
-export interface ColumnInfo {
-  dataType: DataType;
+export interface InsightsRequestColumnInfo {
+  dataType: InsightsRequestDataType;
   name: string;
 }
 
-export enum DataType {
+export enum InsightsRequestDataType {
   Number = 0,
   String = 1,
   DateTime = 2,
