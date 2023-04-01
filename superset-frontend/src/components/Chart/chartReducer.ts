@@ -31,7 +31,7 @@ export const chart: ChartState = {
   chartAlert: null,
   chartStatus: 'loading',
   chartStackTrace: null,
-  chartInsights: "",
+  chartInsights: '',
   chartUpdateEndTime: null,
   chartUpdateStartTime: 0,
   latestQueryFormData: {},
@@ -116,7 +116,7 @@ export default function chartReducer(
     [actions.CHART_INSIGHTS_RETRIEVED](state) {
       return {
         ...state,
-        chartInsights: action.insights
+        chartInsights: action.insights,
       };
     },
     [actions.DYNAMIC_PLUGIN_CONTROLS_READY](state) {

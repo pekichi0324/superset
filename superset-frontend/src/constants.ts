@@ -141,7 +141,7 @@ export const NULL_DISPLAY = t('N/A');
 /**
  * Currently supported viz_type to retrieve graph insights
  */
-export const INSIGHTS_SUPPORTED_VIZ_TYPE = ["world_map", "table"];
+export const INSIGHTS_SUPPORTED_VIZ_TYPE = ['world_map', 'table'];
 
 export const DEFAULT_COMMON_BOOTSTRAP_DATA: CommonBootstrapData = {
   flash_messages: [],

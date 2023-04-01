@@ -452,7 +452,10 @@ export function exploreJSON(
             }),
           ),
         );
-        return Promise.all([dispatch(chartUpdateSucceeded(queriesResponse, key)), dispatch(getChartInsights(queriesResponse, formData.viz_type, key))]);
+        return Promise.all([
+          dispatch(chartUpdateSucceeded(queriesResponse, key)),
+          dispatch(getChartInsights(queriesResponse, formData.viz_type, key)),
+        ]);
       })
       .catch(response => {
         if (isFeatureEnabled(FeatureFlag.GLOBAL_ASYNC_QUERIES)) {
@@ -650,37 +653,31 @@ export const getDatasourceSamples = async (
 };
 
 export const GET_CHART_INSIGHTS = 'GET_CHART_INSIGHTS';
-export function getChartInsights (chartContent, vizType, chartId) {
-
-  
+export function getChartInsights(chartContent, vizType, chartId) {
   return async function (dispatch, getState) {
-    
-    if (!INSIGHTS_SUPPORTED_VIZ_TYPE.includes(vizType))
-    {
+    if (!INSIGHTS_SUPPORTED_VIZ_TYPE.includes(vizType)) {
       return;
     }
     try {
       let formattedChartData = formatData(vizType, chartContent);
       let response = await callApi({
         jsonPayload: formattedChartData,
-        url: "https://insights-generator.azurewebsites.net/InsightsGenerator/api",
-        headers: { Accept: 'application/json'},
-        timeout:0,
-        method:"POST",
-        mode:"cors"
-       
+        url: 'https://insights-generator.azurewebsites.net/InsightsGenerator/api',
+        headers: { Accept: 'application/json' },
+        timeout: 0,
+        method: 'POST',
+        mode: 'cors',
       });
       console.log(response.json);
       dispatch(chartInsightsRetrieved(response.json, chartId));
-
     } catch (err) {
-          const clientError = await getClientErrorObject(err);
-          throw new Error(
-            clientError.message || clientError.error || t('Sorry, an error occurred'),
-            { cause: err },
+      const clientError = await getClientErrorObject(err);
+      throw new Error(
+        clientError.message ||
+          clientError.error ||
+          t('Sorry, an error occurred'),
+        { cause: err },
       );
-      
-    };
-  }
+    }
+  };
 }
-
