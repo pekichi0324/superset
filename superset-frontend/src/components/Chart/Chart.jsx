@@ -246,6 +246,7 @@ class Chart extends React.PureComponent {
       chartStatus,
       errorMessage,
       chartIsStale,
+      chartInsights,
       queriesResponse = [],
       width,
     } = this.props;
@@ -304,7 +305,7 @@ class Chart extends React.PureComponent {
           height={height}
           width={width}
         >
-          <div className="slice_container" data-test="slice-container">
+          <div className="slice_container" data-test="slice-container" tabindex="0" aria-label={chartInsights}>
             {this.props.isInView ||
             !isFeatureEnabled(FeatureFlag.DASHBOARD_VIRTUALIZATION) ||
             isCurrentUserBot() ? (

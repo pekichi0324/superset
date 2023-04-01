@@ -31,6 +31,7 @@ export const chart: ChartState = {
   chartAlert: null,
   chartStatus: 'loading',
   chartStackTrace: null,
+  chartInsights: "",
   chartUpdateEndTime: null,
   chartUpdateStartTime: 0,
   latestQueryFormData: {},
@@ -110,6 +111,12 @@ export default function chartReducer(
         chartStackTrace: action.queriesResponse
           ? action.queriesResponse?.[0]?.stacktrace
           : null,
+      };
+    },
+    [actions.CHART_INSIGHTS_RETRIEVED](state) {
+      return {
+        ...state,
+        chartInsights: action.insights
       };
     },
     [actions.DYNAMIC_PLUGIN_CONTROLS_READY](state) {

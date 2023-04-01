@@ -19,7 +19,7 @@
 /* eslint no-undef: 'error' */
 /* eslint no-param-reassign: ["error", { "props": false }] */
 import moment from 'moment';
-import { t, SupersetClient, isDefined } from '@superset-ui/core';
+import { t, SupersetClient, isDefined, callApi } from '@superset-ui/core';
 import { getControlsState } from 'src/explore/store';
 import { isFeatureEnabled, FeatureFlag } from 'src/featureFlags';
 import {
@@ -40,6 +40,8 @@ import { safeStringify } from 'src/utils/safeStringify';
 import { allowCrossDomain as domainShardingEnabled } from 'src/utils/hostNamesConfig';
 import { updateDataMask } from 'src/dataMask/actions';
 import { waitForAsyncData } from 'src/middleware/asyncEvent';
+import { INSIGHTS_SUPPORTED_VIZ_TYPE } from 'src/constants';
+import { formatData } from 'src/insights/insightsRetrievalHelper';
 
 export const CHART_UPDATE_STARTED = 'CHART_UPDATE_STARTED';
 export function chartUpdateStarted(queryController, latestQueryFormData, key) {
@@ -109,6 +111,11 @@ export const dynamicPluginControlsReady = () => (dispatch, getState) => {
     controlsState,
   });
 };
+
+export const CHART_INSIGHTS_RETRIEVED = 'CHART_INSIGHTS_RETRIEVED';
+export function chartInsightsRetrieved(insights, key) {
+  return { type: CHART_INSIGHTS_RETRIEVED, insights, key };
+}
 
 const legacyChartDataRequest = async (
   formData,
@@ -445,7 +452,7 @@ export function exploreJSON(
             }),
           ),
         );
-        return dispatch(chartUpdateSucceeded(queriesResponse, key));
+        return Promise.all([dispatch(chartUpdateSucceeded(queriesResponse, key)), dispatch(getChartInsights(queriesResponse, formData.viz_type, key))]);
       })
       .catch(response => {
         if (isFeatureEnabled(FeatureFlag.GLOBAL_ASYNC_QUERIES)) {
@@ -641,3 +648,39 @@ export const getDatasourceSamples = async (
     );
   }
 };
+
+export const GET_CHART_INSIGHTS = 'GET_CHART_INSIGHTS';
+export function getChartInsights (chartContent, vizType, chartId) {
+
+  
+  return async function (dispatch, getState) {
+    
+    if (!INSIGHTS_SUPPORTED_VIZ_TYPE.includes(vizType))
+    {
+      return;
+    }
+    try {
+      let formattedChartData = formatData(vizType, chartContent);
+      let response = await callApi({
+        jsonPayload: formattedChartData,
+        url: "https://insights-generator.azurewebsites.net/InsightsGenerator/api",
+        headers: { Accept: 'application/json'},
+        timeout:0,
+        method:"POST",
+        mode:"cors"
+       
+      });
+      console.log(response.json);
+      dispatch(chartInsightsRetrieved(response.json, chartId));
+
+    } catch (err) {
+          const clientError = await getClientErrorObject(err);
+          throw new Error(
+            clientError.message || clientError.error || t('Sorry, an error occurred'),
+            { cause: err },
+      );
+      
+    };
+  }
+}
+

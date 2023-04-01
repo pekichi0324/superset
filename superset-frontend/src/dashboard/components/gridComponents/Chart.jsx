@@ -505,6 +505,7 @@ class Chart extends React.Component {
             onFilterMenuClose={this.handleFilterMenuClose}
             annotationData={chart.annotationData}
             chartAlert={chart.chartAlert}
+            chartInsights={chart.chartInsights}
             chartId={id}
             chartStatus={chartStatus}
             datasource={datasource}
